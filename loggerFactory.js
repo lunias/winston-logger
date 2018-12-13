@@ -38,7 +38,7 @@ const formatLogArguments = (args, filePath, maskFn, fetchStackInfo = true, inclu
   args = Array.prototype.slice.call(args);
 
   let stackInfo = fetchStackInfo ? getStackInfo(1) : null;
-  let msg = stackInfo ? '(' + filePath + ':' + stackInfo.line + ')' : '(' + filePath + ')';
+  let msg = stackInfo ? '(' + filePath + ':' + stackInfo.line + ' method: ' + stackInfo.method + ')' : '(' + filePath + ')';
 
   let firstObj = true;
   for (const i in args) {
