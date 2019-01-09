@@ -61,12 +61,15 @@ const driverFactory = (platform) => {
 
 const driver = (invokeFn, extractDataFn = (result) => result) => {
 
+    const _stubs = [];
     const _intents = [];
     const _expectations = [];
     let _lastInvocationData = null;
     let _authState = null;
 
     const _reset = () => {
+        _stubs.forEach(s => s.restore());
+        _stubs.length = 0;
         _intents.length = 0;
         _expectations.length = 0;
         _lastInvocationData = null;
@@ -74,6 +77,25 @@ const driver = (invokeFn, extractDataFn = (result) => result) => {
     };
 
     const builder = {
+
+        stub: (obj, method, fakeFn) => {
+            const restoreFn = () => {
+                // obj.method.restore();
+            };
+            const stubFn = () => {
+                // sinon.stub(obj, method).callsFake(fakeFn);
+            };
+            _stubs[_intents.length] = {
+                stub: () => {
+                    restoreFn();
+                    stubFn();
+                },
+                restore: () => {
+                    restoreFn();
+                }
+            };
+            return builder;
+        },
 
         authState: (authState) => {
             _authState = authState;
@@ -92,6 +114,7 @@ const driver = (invokeFn, extractDataFn = (result) => result) => {
 
         go: () => {
             for (let i = 0; i < _intents.length; i++) {
+                _stubs[i] && _stubs[i].stub();
                 let result = invokeFn(_intents[i], _lastInvocationData, _authState);
                 _lastInvocationData = extractDataFn(result);
                 (_expectations[i] || []).forEach(e => e(result));
@@ -123,6 +146,9 @@ const E = {
 const googleDriver = driverFactory('google');
 
 googleDriver
+    .stub({}, test, () => {
+        return 'fake';
+    })
     .authState('authenticated')
     .intend('OrderStatus')
     .expect(
