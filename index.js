@@ -117,8 +117,8 @@ const driver = (invokeFn, extractDataFn = (result) => result) => {
             for (let i = 0; i < _intents.length; i++) {
                 (_stubs[i] || []).forEach(s => s.stub());
                 let result = invokeFn(_intents[i], _lastInvocationData, _authState);
-                _lastInvocationData = extractDataFn(result);
                 (_expectations[i] || []).forEach(e => e(result));
+                _lastInvocationData = extractDataFn(result);
             }
             _reset();
         }
