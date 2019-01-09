@@ -86,7 +86,7 @@ const driver = (invokeFn, extractDataFn = (result) => result) => {
         },
 
         expect: (...expectations) => {
-            _expectations.push(expectations);
+            _expectations[_intents.length - 1] = expectations;
             return builder;
         },
 
@@ -107,17 +107,17 @@ const driver = (invokeFn, extractDataFn = (result) => result) => {
 
 const E = {
     visualType: (expectation) => (result) => {
-        const assert = result.visualType === expectation;
+        const assert = expectation === result.visualType;
         console.log('VisualType: ' + assert);
     },
 
     say: (expectation) => (result) => {
-        const assert = result.say === expectation;
+        const assert = expectation === result.say;
         console.log('Say: ' + assert);
     },
 
     state: (expectation) => (result) => {
-        const assert = result.state === expectation;
+        const assert = expectation === result.state;
         console.log('State: ' + assert);
     }
 };
