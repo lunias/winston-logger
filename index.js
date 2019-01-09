@@ -84,14 +84,15 @@ const driver = (invokeFn, extractDataFn = (result) => result) => {
             const stubFn = () => {
                 // sinon.stub(obj, method).callsFake(fakeFn);
             };
-            let stubs = _stubs[_intents.length];
-            if (!stubs) stubs = [];
-            stubs.push({
+
+            (_stubs[_intents.length] = (_stubs[_intents.length] || [])).push({
                 stub: () => {
+                    console.log('stub');
                     restoreFn();
                     stubFn();
                 },
                 restore: () => {
+                    console.log('restore');
                     restoreFn();
                 }
             });
@@ -149,6 +150,9 @@ googleDriver
     .stub({}, test, () => {
         return 'fake';
     })
+    .stub({}, test, () => {
+        return 'fake';
+    })
     .authState('authenticated')
     .intend('OrderStatus')
     .expect(
@@ -157,6 +161,9 @@ googleDriver
         E.state('ORDER_STATUS'))
     .intend('Yes')
     .expect(E.say('Blah2'))
+    .stub({}, test, () => {
+        return 'fake';
+    })
     .intend('Yes')
     .expect(E.visualType('List'))
     .go();
